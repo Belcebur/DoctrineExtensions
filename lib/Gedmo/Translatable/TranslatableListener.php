@@ -462,10 +462,22 @@ class TranslatableListener extends MappedEventSubscriber
                 $locale,
                 $config['useObjectClass']
             );
+            
+            /**
+             * if translation not exist, seek a translation with "default locale" and if does not exist select the default translation. 
+             */ 
+            $callbackResult = $ea->loadTranslations(
+                $object,
+                $translationClass,
+                $this->getDefaultLocale(),
+                $config['useObjectClass']
+            );
+            $mergedResult=array_merge_recursive($result,$callbackResult);
+            
             // translate object's translatable properties
             foreach ($config['fields'] as $field) {
                 $translated = '';
-                foreach ((array) $result as $entry) {
+                foreach ((array) $mergedResult as $entry) {
                     if ($entry['field'] == $field) {
                         $translated = $entry['content'];
                         break;
